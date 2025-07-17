@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dasboard.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1 class="dashboard-title">Welcome to Dashboard</h1>
+
+
+  <div class="card-container">
+    <div class="card orange">
+      <h3>Total Departments</h3>
+      <p>{{ department_data | length }}</p>
+    </div>
+    <div class="card green">
+      <h3>Total Designations</h3>
+      <p>{{ designation_data | length }}</p>
+    </div>
+    <div class="card blue"title="Total Employees Listed in CSV">
+      <h3>Total Employees</h3>
+      <p>{{ total_employees }}</p>
+    </div>
+
+  </div>
+
+   <form method="get" class="search-form">
+      <input type="text" name="search" placeholder="Search by Employee No" value="{{ search_query or '' }}">
+      <button type="submit">Search</button>
+      <a href="{{ url_for('dashboard') }}" class="refresh-button">Refresh</a>
+    </form>
+
+
+ {% if students %}
+  <h2>Search Results</h2>
+  <div class="table-container">
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Employee No</th>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Faculty</th>
+          <th>Designation</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in students %}
+          <tr>
+            <td>{{ row['employee_no'] }}</td>
+            <td>{{ row['name'] }}</td>
+            <td>{{ row['department'] }}</td>
+            <td>{{ row['faculty'] }}</td>
+            <td>{{ row['designation'] }}</td>
+            <td>{{ row['facultymail'] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% elif search_query %}
+  <p>No matching employee found.</p>
+{% endif %}
+
+
+ <div class="chart-wrapper">
+    <canvas id="departmentChart"></canvas>
+    <canvas id="designationChart"></canvas>
+    <canvas id="activationChart"></canvas>
+  </div>
+  <script>
+    const departmentData = {{ department_data | tojson }};
+    const designationData = {{ designation_data | tojson }};
+    const activationData = {{ activation_data | tojson }};
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+
+</body>
+</html>
